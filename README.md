@@ -3,10 +3,10 @@ clone guide
 1. import the mysql database
 
 2. for backend:
-cd backend
-composer install
-php artisan migrate:fresh --seed
-php artisan storage:link
+cd backend, 
+composer installm, 
+php artisan migrate:fresh --seed, 
+php artisan storage:link, 
 
 3. for frontend:
-npm install
+npm install, 
