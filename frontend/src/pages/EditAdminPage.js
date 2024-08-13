@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAdmin, updateAdmin } from '../services/api';
 
@@ -9,19 +9,20 @@ const EditAdminPage = () => {
     const [id, setId] = useState('');
     const navigate = useNavigate();
 
+    const fetchAdminData = async () => {
+        try {
+            const response = await fetchAdmin();
+            // console.log('Admin data:', response.data); // Log response data
+            setAdmin(response.data);
+            setName(response.data?.name || ''); // Handle undefined
+            setEmail(response.data?.email || ''); // Handle undefined
+            setId(response.data?.id || ''); // Handle undefined
+        } catch (error) {
+            console.error('Error fetching admin data:', error.message);
+        }
+    };
+
     useEffect(() => {
-        const fetchAdminData = async () => {
-            try {
-                const response = await fetchAdmin();
-                // console.log('Admin data:', response.data); // Log response data
-                setAdmin(response.data);
-                setName(response.data?.name || ''); // Handle undefined
-                setEmail(response.data?.email || ''); // Handle undefined
-                setId(response.data?.id || ''); // Handle undefined
-            } catch (error) {
-                console.error('Error fetching admin data:', error.message);
-            }
-        };
 
         fetchAdminData();
     }, []);
@@ -32,6 +33,8 @@ const EditAdminPage = () => {
         try {
             await updateAdmin({ name, email }, id);
             alert('Admin updated successfully.');
+            fetchAdminData();
+            window.location.reload();
             navigate('/');
         } catch (error) {
             console.error('Error updating admin:', error.message);

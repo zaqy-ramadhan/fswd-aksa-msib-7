@@ -1,17 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiLogOut, FiUser, FiMoon, FiSun, FiComputer } from 'react-icons/fi';
 import { logout, fetchAdmin } from '../services/api';
 
-const Navigation = ({ user, onLogout }) => {
+const Navigation = ({ onLogout }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [loading, setLoading] = useState(true); // State for loading
-    const navigate = useNavigate();
+    const [name, setName] = useState('');    const navigate = useNavigate();
+
 
     const handleLogout = async () => {
         try {
             await logout(); // Call the API logout function
             onLogout(); // Call the parent onLogout function
+            window.location.reload();
             navigate('/'); // Redirect to home
         } catch (error) {
             console.error('Error during logout:', error.message);
@@ -25,12 +27,9 @@ const Navigation = ({ user, onLogout }) => {
 
     const fetchUserData = async () => {
         try {
-            const response = await fetchAdmin(); // Fetch user data
-            // If response.data contains user data, set it to user
+            const response = await fetchAdmin();
             if (response.data) {
-                // Update user data if needed
-            } else {
-                // Handle the case when no user data is found
+                setName(response.data?.name || ''); // Handle undefined
             }
         } catch (error) {
             console.error('Error fetching user data:', error.message);
@@ -55,19 +54,19 @@ const Navigation = ({ user, onLogout }) => {
                     <Link to="/" className="text-xl font-semibold hover:text-gray-300">
                         Home
                     </Link>
-                    {user && (
+                    {name && (
                         <Link to="/employees" className="hover:text-gray-300">
                             Employees
                         </Link>
                     )}
                 </div>
-                {user && (
+                {name && (
                     <div className="relative">
                         <button
                             onClick={toggleDropdown}
                             className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
                         >
-                            <span>{user.name}</span>
+                            <span>{name}</span>
                             <FiUser size={20} />
                         </button>
                         {isDropdownOpen && (
